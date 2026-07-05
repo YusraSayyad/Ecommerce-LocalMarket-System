@@ -46,23 +46,40 @@ Users can browse products, add items to cart, and place orders, while sellers ma
 
 ## 📂 Project Structure
 local-market-ecommerce/
+
 │
 ├── backend/
+
 │ ├── models/
+
 │ ├── routes/
+
 │ ├── controllers/
+
 │ ├── middleware/
+
 │ └── server.js
+
 │
+
 ├── frontend/
+
 │ ├── index.html
+
 │ ├── pages/
+
 │ ├── css/
+
 │ ├── js/
+
 │ └── assets/
+
 │
+
 ├── .env
+
 ├── package.json
+
 └── README.md
 
 ## ⚙️ Setup Instructions
