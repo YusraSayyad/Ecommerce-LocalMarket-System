@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fresh Mart Cart</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial;
+}
+
+body{
+    background:#f4fff4;
+}
+
+/* NAVBAR */
+nav{
+    background:#2e7d32;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    padding:20px 50px;
+    align-items:center;
+}
+
+nav h2{
+    font-size:28px;
+}
+
+nav ul{
+    display:flex;
+    list-style:none;
+    gap:30px;
+}
+
+nav ul li a{
+    color:white;
+    text-decoration:none;
+    font-size:18px;
+}
+
+/* MAIN */
+.container{
+    display:flex;
+    gap:30px;
+    padding:40px;
+}
+
+.cart-section{
+    flex:2;
+}
+
+.bill-section{
+    flex:1;
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+    height:fit-content;
+}
+
+.cart-item{
+    display:flex;
+    gap:20px;
+    background:white;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:15px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.12);
+}
+
+.cart-item img{
+    width:120px;
+    height:120px;
+    object-fit:cover;
+    border-radius:12px;
+}
+
+.qty-box{
+    display:flex;
+    gap:10px;
+    margin:15px 0;
+    align-items:center;
+}
+
+.qty-box button{
+    width:35px;
+    height:35px;
+    border:none;
+    background:#4caf50;
+    color:white;
+    font-size:20px;
+    border-radius:50%;
+    cursor:pointer;
+}
+
+.remove-btn{
+    background:red;
+    color:white;
+    border:none;
+    padding:10px 16px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.bill-section h2{
+    margin-bottom:20px;
+}
+
+.bill-row{
+    display:flex;
+    justify-content:space-between;
+    margin:15px 0;
+}
+
+.buy-btn{
+    width:100%;
+    margin-top:20px;
+    padding:15px;
+    background:#2e7d32;
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-size:18px;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <h2>Fresh Mart 🛒</h2>
+    <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="checkout.html">Checkout</a></li>
+        <li><a href="#">Categories</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+
+    <div class="cart-section">
+        <h1>Your Cart</h1>
+        <br>
+        <div id="cartItems"></div>
+    </div>
+
+    <div class="bill-section">
+        <h2>Billing Summary</h2>
+
+        <div class="bill-row">
+            <span>Subtotal</span>
+            <span id="subtotal">₹0</span>
+        </div>
+
+        <div class="bill-row">
+            <span>Delivery</span>
+            <span id="delivery">₹50</span>
+        </div>
+
+        <div class="bill-row">
+            <span>GST (5%)</span>
+            <span id="gst">₹0</span>
+        </div>
+
+        <hr><br>
+
+        <div class="bill-row">
+            <strong>Total</strong>
+            <strong id="total">₹0</strong>
+        </div>
+
+        <button class="buy-btn">Buy Now</button>
+    </div>
+    </div>
+<script>
+async function loadCart() {
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    const res = await fetch(`http://localhost:5000/cart/${user._id}`);
+    const cart = await res.json();
+
+    const container = document.getElementById("cartItems");
+
+    container.innerHTML = "";
+
+    let subtotal = 0;
+
+    if (!cart.items || cart.items.length === 0) {
+        container.innerHTML = "<h3>Your cart is empty 🛒</h3>";
+        updateBill(0);
+        return;
+    }
+
+    cart.items.forEach(item => {
+
+        subtotal += item.productId.price * item.quantity;
+
+        container.innerHTML += `
+<div class="cart-item">
+    <img src="http://localhost:5000${item.productId.image}">
+    <div>
+        <h3>${item.productId.name}</h3>
+        <p>Price: ₹${item.productId.price}</p>
+
+        <div class="qty-box">
+            <button onclick="decreaseQty('${item.productId._id}')">-</button>
+            <span>${item.quantity}</span>
+            <button onclick="increaseQty('${item.productId._id}')">+</button>
+        </div>
+    </div>
+</div>
+`;
+    });
+
+    updateBill(subtotal);
+}
+
+// BILL CALCULATION
+function updateBill(subtotal) {
+
+    let delivery = 50;
+    let gst = subtotal * 0.05;
+    let total = subtotal + delivery + gst;
+
+    document.getElementById("subtotal").innerText = "₹" + subtotal;
+    document.getElementById("delivery").innerText = "₹" + delivery;
+    document.getElementById("gst").innerText = "₹" + gst.toFixed(2);
+    document.getElementById("total").innerText = "₹" + total.toFixed(2);
+}
+
+loadCart();
+
+async function increaseQty(productId) {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    await fetch("http://localhost:5000/cart/update", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            userId: user._id,
+            productId,
+            action: "increase"
+        })
+    });
+
+    loadCart();
+}
+
+async function decreaseQty(productId) {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    await fetch("http://localhost:5000/cart/update", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            userId: user._id,
+            productId,
+            action: "decrease"
+        })
+    });
+
+    loadCart();
+}
+
+document.querySelector(".buy-btn").addEventListener("click", async () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+        alert("Please login first");
+        window.location.href = "login.html";
+        return;
+    }
+
+    const res = await fetch(`http://localhost:5000/cart/${user._id}`);
+    const cart = await res.json();
+
+    if (!cart.items || cart.items.length === 0) {
+        alert("Cart is empty!");
+        return;
+    }
+
+    window.location.href = "checkout.html";
+});
+</script>
+
+</body>
+</html>

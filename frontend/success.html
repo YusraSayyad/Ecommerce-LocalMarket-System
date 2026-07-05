@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Success - Fresh Mart</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#f7e7ec;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+.success-card{
+    width:100%;
+    max-width:1100px;
+    background:white;
+    border-radius:20px;
+    padding:30px 50px 60px;
+    box-shadow:0 15px 35px rgba(0,0,0,0.12);
+}
+
+nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:40px;
+}
+
+.logo{
+    font-size:32px;
+    font-weight:700;
+    color:#2e7d32;
+}
+
+nav ul{
+    display:flex;
+    list-style:none;
+    gap:30px;
+}
+
+nav a{
+    text-decoration:none;
+    color:#333;
+    font-weight:500;
+    transition:.3s;
+}
+
+nav a:hover{
+    color:#2e7d32;
+}
+
+.success-content{
+    text-align:center;
+}
+
+.icon{
+    font-size:120px;
+    margin-bottom:20px;
+    animation:bounce 1.2s infinite alternate;
+}
+
+@keyframes bounce{
+    from{
+        transform:translateY(0);
+    }
+    to{
+        transform:translateY(-12px);
+    }
+}
+
+.success-content h1{
+    color:#2e7d32;
+    font-size:42px;
+    margin-bottom:15px;
+}
+
+.success-content p{
+    color:#666;
+    font-size:18px;
+    margin-bottom:15px;
+}
+
+.order-id{
+    display:inline-block;
+    background:#f1f8e9;
+    padding:12px 24px;
+    border-radius:30px;
+    color:#2e7d32;
+    font-weight:600;
+    margin-bottom:30px;
+    word-break:break-word;
+}
+
+.buttons{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+}
+
+button{
+    padding:15px 28px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:600;
+    transition:.3s;
+}
+
+.track-btn{
+    background:#ff9800;
+    color:white;
+}
+
+.home-btn{
+    background:#4caf50;
+    color:white;
+}
+
+button:hover{
+    transform:scale(1.05);
+}
+
+.loading{
+    color:#777;
+}
+
+@media(max-width:768px){
+
+    .success-card{
+        padding:25px;
+    }
+
+    nav{
+        flex-direction:column;
+        gap:15px;
+    }
+
+    nav ul{
+        flex-wrap:wrap;
+        justify-content:center;
+    }
+
+    .buttons{
+        flex-direction:column;
+    }
+
+    .success-content h1{
+        font-size:30px;
+    }
+
+    .icon{
+        font-size:90px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="success-card">
+
+    <nav>
+        <div class="logo">Fresh Mart 🛒</div>
+
+        <ul>
+            <li>
+                <a href="index.html#home">Home</a>
+            </li>
+
+            <li>
+                <a href="index.html#products">Products</a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="success-content">
+
+        <div class="icon">✅</div>
+
+        <h1>Your Order Has Been Placed!</h1>
+
+        <p>
+            Thank you for shopping with Fresh Mart.
+            We'll notify you once your order ships.
+        </p>
+
+        <div class="order-id" id="orderId">
+            Loading Order ID...
+        </div>
+
+        <div class="buttons">
+            <button class="track-btn" onclick="trackOrder()">
+                Track Order
+            </button>
+
+            <button class="home-btn" onclick="goHome()">
+                Continue Shopping
+            </button>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const API = "http://localhost:5000";
+
+async function loadLatestOrder() {
+
+    const orderIdElement = document.getElementById("orderId");
+
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+        orderIdElement.innerText = "Order ID: User Not Found";
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            `${API}/orders/user/${user._id}`
+        );
+
+        const orders = await response.json();
+
+        if (orders && orders.length > 0) {
+
+            const latestOrder =
+                orders[orders.length - 1];
+
+            orderIdElement.innerText =
+                `Order ID: ${latestOrder._id}`;
+
+        } else {
+
+            orderIdElement.innerText =
+                "Order ID: Not Available";
+        }
+
+    } catch (error) {
+
+        console.log("Order Fetch Error:", error);
+
+        orderIdElement.innerText =
+            "Order ID: Unable To Load";
+    }
+}
+
+function trackOrder() {
+    window.location.href = "profile.html";
+}
+
+function goHome() {
+
+    window.location.href = "index.html#home";
+}
+
+loadLatestOrder();
+
+</script>
+
+</body>
+</html>

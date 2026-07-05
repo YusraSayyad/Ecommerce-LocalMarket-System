@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fresh Mart</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- OFFER BANNER -->
+    <div class="offer-banner">
+        🎉 Flat 20% OFF on First Order | Free Delivery Above ₹499
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo">Fresh Mart 🛒</div>
+
+        <nav>
+            <a href="#">Home</a>
+            <a href="#">Products</a>
+            <a href="#">Categories</a>
+            <a href="#">Contact</a>
+        </nav>
+
+        <div class="nav-right">
+            <input type="text" placeholder="Search products...">
+            <button class="login-btn">Login</button>
+
+            <a href="cart.html" class="cart-icon">
+                🛒 <span id="cart-count">0</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-left">
+            <h1>Fresh Organic Groceries Delivered Daily</h1>
+            <p>Healthy vegetables, fruits, dairy and bakery products at best prices.</p>
+            <button>Shop Now</button>
+        </div>
+
+        <div class="hero-right">
+            <img src="images/veg.jfif" alt="Vegetables">
+        </div>
+    </section>
+
+    <!-- CATEGORIES -->
+    <section class="categories">
+        <h2>Popular Categories</h2>
+
+        <div class="category-grid">
+            <div class="category-card">🥬 Vegetables</div>
+            <div class="category-card">🍎 Fruits</div>
+            <div class="category-card">🥛 Dairy</div>
+            <div class="category-card">🍞 Bakery</div>
+        </div>
+    </section>
+
+    <!-- PRODUCTS FROM MONGODB -->
+    <section class="products-section">
+        <div class="section-header">
+            <h2>Our Organic Products</h2>
+            <button>View More</button>
+        </div>
+
+        <!-- Dynamic products will come here -->
+        <div class="product-grid" id="product-grid"></div>
+    </section>
+
+    <!-- PROMO BANNER -->
+    <section class="promo-banner">
+        <div class="promo-card">Get Every Vegetable You Need</div>
+        <div class="promo-card">Fresh Fruits Everyday</div>
+        <div class="promo-card">Healthy Organic Food</div>
+    </section>
+
+    <!-- NEWSLETTER -->
+    <section class="newsletter">
+        <div>
+            <h2>Subscribe For New Offers</h2>
+        </div>
+
+        <div>
+            <input type="email" placeholder="Your Email">
+            <button>Subscribe</button>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-box">
+            <h3>Fresh Mart 🛒</h3>
+            <p>Mumbai, India</p>
+        </div>
+
+        <div class="footer-box">
+            <h3>Quick Links</h3>
+            <p>Home</p>
+            <p>Products</p>
+            <p>Categories</p>
+        </div>
+
+        <div class="footer-box">
+            <h3>Contact</h3>
+            <p>support@freshmart.com</p>
+            <p>+91 9876543210</p>
+        </div>
+    </footer>
+
+    <div class="copyright">
+        © 2026 Fresh Mart | All Rights Reserved
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

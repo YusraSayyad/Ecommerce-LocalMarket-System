@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>User Profile - Fresh Mart</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial;
+}
+
+body{
+    background:#f4fff4;
+}
+
+nav{
+    background:#2e7d32;
+    color:white;
+    display:flex;
+    justify-content:space-between;
+    padding:20px 50px;
+}
+
+nav ul{
+    display:flex;
+    list-style:none;
+    gap:25px;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+}
+
+.container{
+    padding:40px;
+}
+
+.profile-card{
+    display:flex;
+    gap:30px;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.12);
+    margin-bottom:40px;
+}
+
+.profile-img{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    background:#ddd;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:50px;
+}
+
+.profile-details h2{
+    margin-bottom:15px;
+}
+
+.profile-details p{
+    margin:10px 0;
+}
+
+.orders h2{
+    margin-bottom:20px;
+}
+
+.order-card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    margin-bottom:20px;
+    box-shadow:0 4px 15px rgba(0,0,0,0.12);
+}
+
+.product-row{
+    display:flex;
+    justify-content:space-between;
+    margin:8px 0;
+}
+
+.status{
+    display:inline-block;
+    padding:8px 14px;
+    border-radius:20px;
+    color:white;
+    margin-top:15px;
+}
+
+.processing{
+    background:orange;
+}
+
+.delivered{
+    background:green;
+}
+</style>
+</head>
+
+<body>
+
+<nav>
+    <h2>Fresh Mart 🛒</h2>
+    <ul>
+        <li><a href="index.html#home">Home</a></li>
+        <li><a href="cart.html">Cart</a></li>
+        <li><a href="profile.html">Profile</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+
+    <!-- Profile -->
+    <div class="profile-card">
+        <div class="profile-img">👤</div>
+
+        <div class="profile-details">
+      <h2 id="name">Loading...</h2>
+<p>Email: <span id="email">Loading...</span></p>
+<p>Phone: <span id="phone">Loading...</span></p>
+<p>Address: <span id="address">Loading...</span></p>
+        </div>
+    </div>
+
+    <!-- Orders -->
+    <div class="orders">
+        <h2>Order History</h2>
+        <div id="ordersContainer"></div>
+    </div>
+
+</div>
+
+<script>
+
+const API = "http://localhost:5000";
+
+const user = JSON.parse(localStorage.getItem("user"));
+const container = document.getElementById("ordersContainer");
+
+if(!user){
+    alert("Please login first");
+    window.location.href = "login.html";
+}
+
+// ================= PROFILE =================
+
+async function loadProfile(){
+
+    try{
+
+        const res = await fetch(
+            `${API}/users/profile/${user.email}`
+        );
+
+        const data = await res.json();
+
+        document.getElementById("name").innerText =
+            data.name || "Not Available";
+
+        document.getElementById("email").innerText =
+            data.email || "Not Available";
+
+        document.getElementById("phone").innerText =
+            data.phone || "Not Available";
+
+        document.getElementById("address").innerText =
+            data.address || "Not Available";
+
+    }catch(err){
+        console.log(err);
+    }
+}
+
+// ================= ORDERS =================
+
+async function loadOrders(){
+
+    try{
+
+        const res = await fetch(
+            `${API}/orders/user/${user._id}`
+        );
+
+        const orders = await res.json();
+
+        if(!orders.length){
+
+            container.innerHTML =
+                "<p>No orders placed yet.</p>";
+
+            return;
+        }
+
+        orders.reverse().forEach(order => {
+
+            let productsHTML = "";
+
+            order.items.forEach(item => {
+
+                productsHTML += `
+                    <div class="product-row">
+                        <span>${item.name}</span>
+                        <span>
+                            ₹${item.price}
+                            × ${item.quantity}
+                        </span>
+                    </div>
+                `;
+            });
+
+            container.innerHTML += `
+                <div class="order-card">
+
+                    <h3>
+                        Order ID:
+                        ${order._id}
+                    </h3>
+
+                    <br>
+
+                    ${productsHTML}
+
+                    <hr><br>
+
+                    <h3>
+                        Total:
+                        ₹${order.total}
+                    </h3>
+
+                    <span class="status processing">
+                        Processing
+                    </span>
+
+                </div>
+            `;
+        });
+
+    }catch(err){
+
+        console.log(err);
+
+        container.innerHTML =
+            "<p>Unable to load orders.</p>";
+    }
+}
+
+loadProfile();
+loadOrders();
+
+</script>
+
+</body>
+</html>
